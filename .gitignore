@@ -13,13 +13,10 @@ env/
 .env
 *.env
 
+# Duplicate local dataset folder. The assignment dataset lives at ./IMDB Dataset.csv.
+data/
+
 # OS/editor artifacts
 .DS_Store
 .vscode/
 .idea/
-
-# Streamlit local config/cache
-.streamlit/secrets.toml
-
-# Local training data
-data/

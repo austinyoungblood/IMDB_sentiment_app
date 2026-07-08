@@ -6,9 +6,10 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py .
+COPY main.py .
 COPY sentiment_model.pkl .
+COPY ["IMDB Dataset.csv", "./IMDB Dataset.csv"]
 
-EXPOSE 8501
+EXPOSE 8001
 
-CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0", "--server.port=8501"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]

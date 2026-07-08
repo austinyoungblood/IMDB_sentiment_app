@@ -1,61 +1,133 @@
-# Movie Review Sentiment Analyzer
+# Movie Review Sentiment API
 
-This project packages a Streamlit sentiment analysis application in a Docker container. The app loads a trained machine learning model from `sentiment_model.pkl` and predicts whether user-entered movie review text has positive or negative sentiment.
+This project wraps a trained IMDB movie review sentiment model in a FastAPI
+backend. The API accepts review text and returns whether the model predicts a
+positive or negative sentiment.
 
-## Prerequisites
+## Project Files
 
-- Docker installed and running
-- Make installed
+```text
+.
+├── .gitignore
+├── Dockerfile
+├── Makefile
+├── README.md
+├── main.py
+├── requirements.txt
+├── sentiment_model.pkl
+└── IMDB Dataset.csv
+```
 
-## How to Run with Docker
+## API Endpoints
 
-1. Open a terminal in the `sentiment-streamlit-app` directory:
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/health` | Confirms that the API is running. |
+| POST | `/predict` | Returns the predicted sentiment for input text. |
+| POST | `/predict_proba` | Returns the predicted sentiment and confidence score. |
+| GET | `/example` | Returns one random review from the IMDB training dataset. |
 
-   ```bash
-   cd sentiment-streamlit-app
-   ```
+## Run Locally
 
-2. Build the Docker image:
-
-   ```bash
-   make build
-   ```
-
-3. Run the app container:
-
-   ```bash
-   make run
-   ```
-
-4. Open the app in your browser:
-
-   ```text
-   http://localhost:8501
-   ```
-
-5. To remove the Docker image when you are finished:
-
-   ```bash
-   make clean
-   ```
-
-## How to Run Locally Without Docker
-
-1. Create a virtual environment.
-2. Install dependencies:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Start the app:
-
-   ```bash
-   streamlit run app.py
-   ```
-
-If `sentiment_model.pkl` is missing, download the IMDB Dataset of 50K Movie Reviews from Kaggle, place the zip file in a `data/` folder, then run:
+Create and activate a virtual environment, then install dependencies:
 
 ```bash
-python train_model.py
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Start the API:
+
+```bash
+make dev
+```
+
+This runs the API at:
+
+```text
+http://127.0.0.1:8001
+```
+
+Port `8001` is used by default so it does not conflict with another local
+service on port `8000`. To use port `8000` instead, run:
+
+```bash
+make dev PORT=8000
+```
+
+## Run with Docker
+
+Build the Docker image:
+
+```bash
+make build
+```
+
+Run the container:
+
+```bash
+make run
+```
+
+The API will be available at:
+
+```text
+http://127.0.0.1:8001
+```
+
+To use host port `8000` instead:
+
+```bash
+make run PORT=8000
+```
+
+Remove the Docker image:
+
+```bash
+make clean
+```
+
+## FastAPI Documentation
+
+Once the API is running, open the auto-generated FastAPI docs:
+
+```text
+http://127.0.0.1:8001/docs
+```
+
+If you are running on port `8000`, use:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+## Example Requests
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8001/health
+```
+
+Predict sentiment:
+
+```bash
+curl -X POST http://127.0.0.1:8001/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "This movie was a masterpiece!"}'
+```
+
+Predict sentiment with probability:
+
+```bash
+curl -X POST http://127.0.0.1:8001/predict_proba \
+  -H "Content-Type: application/json" \
+  -d '{"text": "This movie was a complete waste of time."}'
+```
+
+Get a random training example:
+
+```bash
+curl http://127.0.0.1:8001/example
 ```
